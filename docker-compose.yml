@@ -1,0 +1,78 @@
+version: '3.9'
+
+services:
+  mongo:
+    image: mongo
+    container_name: mongo_avalon
+    restart: always 
+    volumes:
+      - type: bind
+        source: ./db/mongo
+        target: /data/db
+        volume:
+          nocopy: true
+    networks:
+      - avalon_net
+
+  mongo-seed:
+    build: ./mongo_seed
+    image: mongo_seed_avalon
+    container_name: mongo_seed_avalon
+    volumes:
+      - type: bind
+        source: ./mongo_seed
+        target: /avalon
+        volume:
+          nocopy: true
+    command: sh -c "chmod +x import.sh && ./import.sh"
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    networks:
+      - avalon_net
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo_express_avalon
+    restart: always
+    ports:
+      - 8081:8081
+    links: 
+      - mongo
+    depends_on:
+      - mongo
+    networks:
+      - avalon_net
+
+  avalon:
+    build: .
+    image: avalon
+    container_name: avalon
+    restart: always
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_NAME=${DB_NAME}
+      - PEERS=${PEERS}
+      - MAX_PEERS=${MAX_PEERS}
+    command: npm start # start avalon node
+    expose:
+      - 6001
+      - 3001
+    ports: 
+      - "6001:6001"
+      - "3001:3001"
+    links: 
+      - mongo
+    depends_on:
+      mongo:
+        condition: service_started
+      mongo-seed:
+        condition: service_completed_successfully
+    networks:
+      - avalon_net
+
+networks:
+  avalon_net:
+    name: avalon_net
+    driver: bridge
