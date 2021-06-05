@@ -52,10 +52,7 @@ exit
     echo Building avalon docker images ...
     docker-compose build
     echo Starting avalon node ...
-    docker-compose up mongo-seed
-    %POWERSHELL% Start-Sleep -s 5
-    docker-compose up mongo-seed
-    f docker-compose up
+    docker-compose up
 exit
 
 :DROP
@@ -95,10 +92,7 @@ exit
 exit
 
 :START   
-    echo Checking genesis block ...
-    docker-compose up mongo-seed
     echo Starting avalon node in background.
-    %POWERSHELL% Start-Sleep -s 5
     docker-compose up -d
 exit
 
