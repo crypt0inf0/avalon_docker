@@ -3,7 +3,7 @@ version: '3.9'
 services:
   mongo:
     image: mongo
-    container_name: mongo_avalon
+    container_name: avalon_mongo
     restart: always 
     volumes:
       - type: bind
@@ -16,15 +16,16 @@ services:
 
   mongo-seed:
     build: ./mongo_seed
-    image: mongo_seed_avalon
-    container_name: mongo_seed_avalon
+    image: avalon_mongo_seed
+    container_name: avalon_mongo_seed
     volumes:
       - type: bind
         source: ./mongo_seed
         target: /avalon
         volume:
           nocopy: true
-    command: sh -c "chmod +x import.sh && ./import.sh"
+    environment:
+      - WAIT_HOSTS=mongo:27017
     links:
       - mongo
     depends_on:
@@ -34,7 +35,7 @@ services:
 
   mongo-express:
     image: mongo-express
-    container_name: mongo_express_avalon
+    container_name: avalon_mongo_express
     restart: always
     ports:
       - 8081:8081
@@ -64,11 +65,11 @@ services:
       - "3001:3001"
     links: 
       - mongo
-    depends_on:
-      mongo:
-        condition: service_started
-      mongo-seed:
-        condition: service_completed_successfully
+    # depends_on:
+    #   mongo:
+    #     condition: service_started
+    #   mongo-seed:
+    #     condition: service_completed_successfully
     networks:
       - avalon_net
 

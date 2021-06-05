@@ -1,4 +1,3 @@
-
 FROM node:12
 LABEL "project.home"="https://github.com/dtube/avalon"
 RUN git clone git://github.com/dtube/avalon

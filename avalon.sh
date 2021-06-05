@@ -32,8 +32,8 @@ delete() {
     stop_existing
     remove_stopped_containers
     remove_unused_volumes
-    remove_avalon_node_images
     remove_avalon_network
+    remove_avalon_node_images
     remove_mongo_db
 }
 
@@ -58,7 +58,7 @@ build() {
     # Build & Run the avalon node
     docker-compose build
     echo "Starting avalon node ..."
-    sleep 5s
+    docker-compose up mongo-seed
     docker-compose up
 }
 
@@ -76,14 +76,13 @@ start() {
         cd ../..
     fi
     # Run docker in background
+    docker-compose up mongo-seed
     docker-compose up -d
 }
 
 drop_mongo_db() {
-    docker start mongo_avalon
     echo "Dropping avalan database ..."
-    sleep 5s 
-    docker exec -it mongo_avalon sh -c 'echo "db.dropDatabase()" | mongo avalon'
+    docker-compose run mongo-seed sh -c "/wait && chmod +x drop.sh && ./drop.sh"
 }
 
 remove_mongo_db() {
@@ -99,9 +98,9 @@ remove_mongo_db() {
 
 stop_existing() {
     echo "Stopping avalon node."
-    MONGO="$(docker ps --all --quiet --filter=name=mongo_avalon)"
-    MONGO_EXPRESS="$(docker ps --all --quiet --filter=name=mongo_express_avalon)"
-    MONGO_SEED="$(docker ps --all --quiet --filter=name=mongo_seed_avalon)"
+    MONGO="$(docker ps --all --quiet --filter=name=avalon_mongo)"
+    MONGO_EXPRESS="$(docker ps --all --quiet --filter=name=avalon_mongo_express)"
+    MONGO_SEED="$(docker ps --all --quiet --filter=name=avalon_mongo_seed)"
     AVALON="$(docker ps --all --quiet --filter=name=avalon)"
 
     if [ -n "$MONGO" ]; then
@@ -151,7 +150,7 @@ remove_unused_volumes() {
 remove_avalon_node_images() {
     echo "Removing avalon node docker images."
     docker rmi avalon
-    docker rmi mongo_seed_avalon
+    docker rmi avalon_mongo_seed
 }
 
 if [ $1 = $BUILD ]; then
