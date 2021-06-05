@@ -26,7 +26,7 @@ Commands:
 ```
 
 ### Tested on windows 10
-Start avalon node docker container with `.\avalon.bat build`
+Start avalon node docker container with `.\avalon.bat build` on **PowerShell**
 ```
 Usage: .\avalon.bat [OPTIONS] COMMAND [arg...]
        .\avalon.bat [ -h ]
