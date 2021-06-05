@@ -26,7 +26,22 @@ Commands:
 ```
 
 ### Tested on windows 10
-#### Git clone avalon_docker
+Start avalon node docker container with `.\avalon.bat build`
+```
+Usage: .\avalon.bat [OPTIONS] COMMAND [arg...]
+       .\avalon.bat [ -h ]
+Options:
+  -h           Prints usage.
+Commands:
+  build      - Build and Run avalon node.
+  drop       - Remove MongoDB avalon database.
+  delete     - Delete avalon node.
+  log        - Display the avalon docker container log.
+  start      - Start avalon node in background.
+  stop       - Stop avalon node.
+```
+### Manual setup
+#### Git clone avalon docker
 Open PowerShell & Run the following commands,
 ```
 git clone https://github.com/crypt0inf0/avalon_docker.git
