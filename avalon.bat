@@ -76,7 +76,7 @@ exit
     docker network rm avalon_net
 
     echo Removing avalon node docker images.
-    f docker rmi -f avalon
+    docker rmi -f avalon
     docker rmi -f avalon_mongo_seed
 
     echo Removing MongoDB databases.
