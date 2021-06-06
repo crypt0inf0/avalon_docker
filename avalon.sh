@@ -57,8 +57,9 @@ build() {
 
     # Build & Run the avalon node
     docker-compose build
-    echo "Starting avalon node ..."
+    echo "Checking genesis block ..."
     docker-compose up mongo-seed
+    echo "Starting avalon node ..."
     docker-compose up
 }
 
@@ -76,7 +77,9 @@ start() {
         cd ../..
     fi
     # Run docker in background
+    echo "Checking genesis block ..."
     docker-compose up mongo-seed
+    echo "Starting avalon node in background."
     docker-compose up -d
 }
 
