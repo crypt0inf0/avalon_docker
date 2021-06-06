@@ -11,6 +11,8 @@ services:
         target: /data/db
         volume:
           nocopy: true
+    logging:
+      driver: none 
     networks:
       - avalon_net
 
@@ -43,6 +45,8 @@ services:
       - mongo
     depends_on:
       - mongo
+    logging:
+      driver: none
     networks:
       - avalon_net
 
