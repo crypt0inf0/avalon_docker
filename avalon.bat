@@ -51,6 +51,8 @@ exit
     cd ../..
     echo Building avalon docker images ...
     docker-compose build
+    echo Checking genesis block ...
+    docker-compose up mongo-seed
     echo Starting avalon node ...
     docker-compose up
 exit
@@ -91,7 +93,9 @@ exit
     docker-compose logs -f avalon
 exit
 
-:START   
+:START
+    echo Checking genesis block ...
+    docker-compose up mongo-seed   
     echo Starting avalon node in background.
     docker-compose up -d
 exit
