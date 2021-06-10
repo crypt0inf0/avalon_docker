@@ -5,6 +5,7 @@ DROP="drop"
 DELETE="delete"
 LOG="log"
 START="start"
+RESTART="restart"
 STOP="stop"
 
 if [ "$#" -eq 0 ] || [ $1 = "-h" ] || [ $1 = "--help" ]; then
@@ -20,6 +21,7 @@ if [ "$#" -eq 0 ] || [ $1 = "-h" ] || [ $1 = "--help" ]; then
     echo "  $DELETE     - Delete avalon node."
     echo "  $LOG        - Display the avalon docker container log."
     echo "  $START      - Start avalon node in background."
+    echo "  $RESTART    - Restart avalon node in background."
     echo "  $STOP       - Stop avalon node."
     exit
 fi
@@ -57,9 +59,8 @@ build() {
 
     # Build & Run the avalon node
     docker-compose build
-    echo "Checking genesis block ..."
-    docker-compose up mongo-seed
     echo "Starting avalon node ..."
+    docker-compose up mongo-seed
     docker-compose up
 }
 
@@ -77,9 +78,14 @@ start() {
         cd ../..
     fi
     # Run docker in background
-    echo "Checking genesis block ..."
     docker-compose up mongo-seed
-    echo "Starting avalon node in background."
+    docker-compose up -d
+}
+
+restart() {
+    # Restart avalon node 
+    docker-compose down
+    docker-compose up mongo-seed
     docker-compose up -d
 }
 
@@ -178,6 +184,11 @@ fi
 
 if [ $1 = $START ]; then
     start
+    exit
+fi
+
+if [ $1 = $RESTART ]; then
+    restart
     exit
 fi
 

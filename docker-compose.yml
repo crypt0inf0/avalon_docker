@@ -55,12 +55,8 @@ services:
     image: avalon
     container_name: avalon
     restart: always
-    environment:
-      - DB_URL=${DB_URL}
-      - DB_NAME=${DB_NAME}
-      - PEERS=${PEERS}
-      - MAX_PEERS=${MAX_PEERS}
-    command: npm start # start avalon node
+    env_file: .env
+    command: node --stack-size=65500 src/main # start avalon node
     expose:
       - 6001
       - 3001

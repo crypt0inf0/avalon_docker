@@ -6,6 +6,11 @@
 * [Docker](https://docs.docker.com/engine/install/)
 * [Docker compose](https://docs.docker.com/compose/install/) version [1.29.2](https://github.com/docker/compose/releases/tag/1.29.2), build 1110ad01
 
+```
+git clone https://github.com/crypt0inf0/avalon_docker.git
+cd avalon_docker
+```
+
 #### Run avalon node (Tested on ubuntu)
 Start avalon node docker container with `sudo ./avalon.sh build`
 ```
@@ -22,6 +27,7 @@ Commands:
   delete     - Delete avalon node.
   log        - Display the avalon docker container log.
   start      - Start avalon node in background.
+  restart    - Restart avalon node in background.
   stop       - Stop avalon node.
 ```
 
@@ -38,6 +44,7 @@ Commands:
   delete     - Delete avalon node.
   log        - Display the avalon docker container log.
   start      - Start avalon node in background.
+  restart    - Restart avalon node in background.
   stop       - Stop avalon node.
 ```
 ### Manual setup
@@ -54,7 +61,7 @@ Expand-Archive .\mongo_seed\genesis\genesis.zip -DestinationPath .\mongo_seed\ge
 ```
 
 #### Run avalon node 
-##### You will be an observer node by default.
+<h5>You will be an observer node by default.</h5>
 Build avalon node images,
 ```
 docker-compose build
@@ -90,6 +97,21 @@ docker-compose logs -f avalon
 #### Run avalon node as a leader
 
 Once the avalon node sync completely, Now we can setup the leader node by executing the follwing command. 
+
+Generate leader key,
+```
+docker exec avalon node src/cli key > leader-key.json
+```
+Enter your newly generated leader public/private key [here](https://github.com/crypt0inf0/avalon_docker/blob/master/.env#L45)
+
+Restart the avalon node,
+```
+./avalon.sh restart
+```
+Enable avalon node as a leader node,
 ```
 docker exec avalon node src/cli enable-node YOUR_LEADER_PUB_KEY -M YOUR_USERNAME -K YOUR_PRIVATE_KEY
 ```
+This transaction must be signed with your master key, or a custom key that allows this transaction. Once this step is done, you can head to the [leader election page](https://d.tube/#!/election) and vote yourself. If your leader key is properly associated to your account, you should see yourself uncrossed.
+
+Once enough votes for your account come in, and you reach the top leaders, your node will start regularly mining blocks.
