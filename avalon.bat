@@ -2,10 +2,11 @@
 
 set CURL=C:\WINDOWS\system32\curl.exe
 set POWERSHELL=C:\Windows\system32\WindowsPowerShell\v1.0\powershell.exe
-set GENESIS_DIR=avalon_docker\mongo_seed\genesis
-set GENESIS_URL=https://codeload.github.com/crypt0inf0/avalon_docker/zip/refs/heads/master
+set GENESIS_DIR=mongo_seed\genesis
+set GENESIS_URL=https://backup.d.tube/genesis.zip
 set SNAPSHOT_URL=https://backup.d.tube/$(date +%H).tar.gz
-set MONGODB=mongo_seed
+set MONGODB_DIR=db
+
 :GETOPTS
 if /I "%1" == "-h" goto HELP
 if /I "%1" == "build" goto BUILD
@@ -43,7 +44,7 @@ exit
     ) else goto :download
 
     :download
-        echo downloading missing files.
+        echo Downloading genesis block.
         %CURL% -o .\genesis.zip %GENESIS_URL%
         echo unzipping genesis.zip
         %POWERSHELL% Expand-Archive .\genesis.zip -DestinationPath .\
@@ -51,43 +52,41 @@ exit
         echo Genesis block exists
     cd ../..
     echo Building avalon docker images ...
-    %POWERSHELL% Start-Sleep -s 5
     docker-compose build
-    echo Starting avalon node ...
+    echo Checking genesis block ...
     docker-compose up mongo-seed
+    echo Starting avalon node ...
     docker-compose up
 exit
 
 :DROP
-    docker start mongo_avalon
-    echo "Dropping avalan database ..."
-    %POWERSHELL% Start-Sleep -s 5
-    docker exec -it mongo_avalon sh -c 'echo "db.dropDatabase()" | mongo avalon'
+    echo Dropping avalan database ...
+    docker-compose run mongo-seed sh -c "/wait && chmod +x drop.sh && ./drop.sh"
 exit
 
 :DELETE
     echo Stopping avalon node.
-    set MONGO=docker ps --all --quiet --filter=name=avalon_mongo
-    set MONGO_EXPRESS=docker ps --all --quiet --filter=name=avalon_mongo_express
-    set MONGO_SEED=docker ps --all --quiet --filter=name=avalon_mongo_seed
-    set AVALON=docker ps --all --quiet --filter=name=avalon
+    set MONGO=avalon_mongo
+    set MONGO_EXPRESS=avalon_mongo_express
+    set MONGO_SEED=avalon_mongo_seed
+    set AVALON=avalon
     
     docker stop %MONGO% %MONGO_EXPRESS% %MONGO_EXPRESS% %MONGO_SEED% %AVALON%
     
     echo Removing all stopped containers.
-    docker rm %MONGO% %MONGO_EXPRESS% %MONGO_EXPRESS% %MONGO_SEED% %AVALON%
+    docker rm -f %MONGO% %MONGO_EXPRESS% %MONGO_EXPRESS% %MONGO_SEED% %AVALON%
 
     echo Removing avalon docker network.
     docker network rm avalon_net
 
     echo Removing avalon node docker images.
-    docker rmi avalon
-    docker rmi avalon_mongo_seed
+    docker rmi -f avalon
+    docker rmi -f avalon_mongo_seed
 
     echo Removing MongoDB databases.
-    cd %MONGODB%
-    RMDIR "db" /S /Q
-    MD db
+    cd %MONGODB_DIR%
+    RMDIR "mongo" /S /Q
+    MD mongo
     cd ../..
 exit
 
@@ -96,9 +95,9 @@ exit
     docker-compose logs -f avalon
 exit
 
-:START   
+:START
     echo Checking genesis block ...
-    docker-compose up mongo-seed
+    docker-compose up mongo-seed   
     echo Starting avalon node in background.
     docker-compose up -d
 exit
@@ -114,10 +113,10 @@ exit
 
 :STOP
     echo Stopping avalon node.
-    set MONGO=docker ps --all --quiet --filter=name=avalon_mongo
-    set MONGO_EXPRESS=docker ps --all --quiet --filter=name=avalon_mongo_express
-    set MONGO_SEED=docker ps --all --quiet --filter=name=avalon_mongo_seed
-    set AVALON=docker ps --all --quiet --filter=name=avalon
+    set MONGO=avalon_mongo
+    set MONGO_EXPRESS=avalon_mongo_express
+    set MONGO_SEED=avalon_mongo_seed
+    set AVALON=avalon
     
     docker stop %MONGO% %MONGO_EXPRESS% %MONGO_EXPRESS% %MONGO_SEED% %AVALON%
 exit
