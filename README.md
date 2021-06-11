@@ -61,7 +61,8 @@ Expand-Archive .\mongo_seed\genesis\genesis.zip -DestinationPath .\mongo_seed\ge
 ```
 
 #### Run avalon node 
-<h5>You will be an observer node by default.</h5>
+<h5>* You will be an observer node by default*</h5>
+
 Build avalon node images,
 ```
 docker-compose build
