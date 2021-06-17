@@ -51,7 +51,7 @@ build() {
         echo "Genesis block exists."
     else 
         echo "Downloading genesis block."
-        wget https://backup.d.tube/genesis.zip -P $PWD/mongo_seed/genesis
+        wget https://testnet-api.oneloved.tube/genesis.zip -P $PWD/mongo_seed/genesis
         cd mongo_seed/genesis
         unzip genesis.zip
         cd ../..
