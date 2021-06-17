@@ -3,7 +3,7 @@
 set CURL=C:\WINDOWS\system32\curl.exe
 set POWERSHELL=C:\Windows\system32\WindowsPowerShell\v1.0\powershell.exe
 set GENESIS_DIR=mongo_seed\genesis
-set GENESIS_URL=https://backup.d.tube/genesis.zip
+set GENESIS_URL=https://testnet-api.oneloved.tube/genesis.zip
 set SNAPSHOT_URL=https://backup.d.tube/$(date +%H).tar.gz
 set MONGODB_DIR=db
 
