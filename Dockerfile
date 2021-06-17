@@ -1,6 +1,6 @@
 FROM node:12
 LABEL "project.home"="https://github.com/dtube/avalon"
-RUN git clone git://github.com/dtube/avalon
+RUN git clone https://github.com/techcoderx/avalon.git --branch hf4-testnet --single-branch
 WORKDIR /avalon
 RUN npm install
 
